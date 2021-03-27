@@ -1,24 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SearchBox from "./components/SearchBox/index.js";
 import "./style.css";
-import data from "../../data/users.json"
 import SearchResults from "./components/SearchResults/index.js";
 
 export default function Search(){
     const [isAtTop, setIsAtTop] = useState(false);
-    const [userData, setUsersData] = useState(data);
     const [result, setResult] = useState([]);
+    const [data, setData] = useState([]);
+    
+
+    useEffect(() => {
+        const getUsers = async () => {
+            fetch("https://jsonplaceholder.typicode.com/users")
+            .then(response => response.json())
+            .then(data => {
+                setData(data);
+            })
+        };
+        getUsers().catch(null);
+    }, []);
+
+   
 
     const handleCloseSearch = () => {
         setIsAtTop(false); 
         setResult([]);
-
     }; 
     const handleSearchClick = (searchText) =>{
         setIsAtTop(true);
-        if(userData?.length){
+        if(data?.length){
             const searchTextMinus = searchText.toLowerCase();
-            const filterData = userData.filter((value) => (
+            const filterData = data.filter((value) => (
                
                     value.name.toLowerCase().includes(searchTextMinus) || 
                     value.phone.toLowerCase().includes(searchTextMinus) ||
